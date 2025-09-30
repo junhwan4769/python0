@@ -1,5 +1,8 @@
 <div class="my-5">
     <h1 class="text-center mb-5">{{title}}</h1>
+    <div class="mb-2">
+        <button id="predict" class="btn btn-secondary">생존예측</button>
+    </div>
     <div id="test"></div>
     <div class="text-center">
         <button id="prev" class="btn btn-sm btn-secondary">이전</button>
@@ -8,9 +11,21 @@
     </div>
 </div>
 <script>
-    let page=83;
+    let page=1;
     let size=5;
     getData();
+
+    $("#predict").on("click", function(){
+        $.ajax({
+            type:"get",
+            url:"/predict",
+            success:function(data){
+                alert(data);
+                page=1;
+                getData();
+            }
+        });
+    });
 
     $("#prev").on("click", function(){
         page -=1;
