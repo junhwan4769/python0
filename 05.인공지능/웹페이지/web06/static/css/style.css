@@ -1,0 +1,15 @@
+#box b {
+    color:red;
+}
+
+#box b1 {
+    color:yellow;
+}
+
+.title {
+    font-size: 12px;
+}
+
+#result img {
+    cursor: pointer;
+}
