@@ -4,6 +4,13 @@ import pandas as pd
 app = Flask(__name__, template_folder='temp', static_folder='static')
 
 
+@app.route('/reset')
+def reset():
+    df_test = pd.read_csv('data/타이타닉/test.csv')
+    df_test['pred'] = ''
+    df_test.to_csv('data/타이타닉/test.csv', index=False)
+    return 'success'
+
 @app.route('/predict')
 def predict():
     from sklearn.neighbors import KNeighborsClassifier

@@ -2,6 +2,7 @@
     <h1 class="text-center mb-5">{{title}}</h1>
     <div class="mb-2">
         <button id="predict" class="btn btn-secondary">생존예측</button>
+        <button id="reset" class="btn btn-danger">초기화</button>
     </div>
     <div id="test"></div>
     <div class="text-center">
@@ -15,14 +16,37 @@
     let size=5;
     getData();
 
+    $("#reset").on("click", function(){
+        if(confirm('정말로 초기화 하시겠습니까?')){
+            $.ajax({
+                type:"get",
+                url:"/reset",
+                success:function(data){
+                    if(data=='success'){
+                        $("#box").modal("show");
+                        $("#box .modal-body").html("초기화를 성공했습니다.");
+                        page=1;
+                        getData();
+                    }
+                }
+            })
+        }else{
+            $("#box").modal("show");
+            $("#box .modal-body").html("초기화를 취소했습니다.");
+        }
+    });
+
     $("#predict").on("click", function(){
         $.ajax({
             type:"get",
             url:"/predict",
             success:function(data){
-                alert(data);
+                if(data=='success'){
+                $("#box").modal("show");
+                $("#box .modal-body").html("예측을 성공했습니다.");
                 page=1;
                 getData();
+                }
             }
         });
     });
