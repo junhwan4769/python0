@@ -1,0 +1,129 @@
+<div class="my-5">
+  <h1 class="text-center mb-5">{{title}}</h1>
+  <div class="row">
+    <div class="col-12 col-md-6 col-lg-4">
+      <form name="frm">
+        <div class="input-group">
+          <input name="query" class="form-control" value="인공지능" placeholder="검색어를 입력하세요">
+          <button class="btn btn-secondary" type="submit">검색</button>
+        </div>
+      </form>
+    </div>
+    <div id="news" class="my-3"></div>
+
+    {%raw%}
+    <script id="temp" type="text/X-handlebars-template">
+      {{#each .}}
+      <div>
+        <h5><a href="{{link}}" target="_blank" rel="noopener noreferrer">{{{title}}}</a></h5>
+        <div class="description text-truncate">
+          {{{description}}}
+          <button class="btn btn-danger btn-sm analyze-btn" text="{{description}}">감성분석</button>
+        </div>
+      </div>
+      {{/each}}
+    </script>
+    {%endraw%}
+  </div>
+</div>
+
+<style>
+  body, .my-5 {
+    background-color: black;
+    color: white;
+  }
+
+  #news {
+    background-color: black;
+    color: white;
+  }
+
+  #news a {
+    color: #1a73e8;
+    text-decoration: underline;
+  }
+
+  #news a:hover {
+    color: #0b56c2;
+  }
+
+  .description {
+    cursor: pointer;
+    color: white;
+  }
+
+  .text-truncate {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .form-control {
+    background-color: white;
+    color: black;
+  }
+
+  .btn.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+  }
+
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+  }
+</style>
+
+<script>
+  // 설명 영역 클릭 시 텍스트 줄임 토글 (버튼 클릭 제외)
+  $("#news").on("click", ".btn-danger", function (e) {
+    $.ajax({
+        type:"get",
+        url:"/predict",
+        data:{"text": $(this).attr("text")},
+        success:function(data){
+            showBox(`이 기사는 <span class="red">${data}</span>적 기사입니다.`);
+        }
+    })
+  });
+  $("#news").on("click", ".description", function (e) {
+    if (!$(e.target).hasClass("analyze-btn")) {
+      $(this).toggleClass("text-truncate");
+    }
+  });
+
+  // 검색 폼 제출 처리
+  $(frm).on("submit", function (e) {
+    e.preventDefault();
+    const query = $(frm.query).val().trim();
+    if (query === "") {
+      alert("검색어를 입력하십시오");
+      return;
+    }
+    getNews();
+  });
+
+  // 뉴스 데이터 받아와서 템플릿 렌더링
+  function getNews() {
+    const query = $(frm.query).val().trim();
+    $.ajax({
+      type: "get",
+      url: "/search",
+      data: { query },
+      success: function (data) {
+        if (!data || data.length === 0) {
+          alert("검색 내용이 없습니다");
+          $(frm.query).val("");
+          $("#news").empty();
+          return;
+        }
+        const temp = Handlebars.compile($("#temp").html());
+        $("#news").html(temp(data));
+      },
+      error: function () {
+        alert("검색 중 오류가 발생했습니다.");
+      }
+    });
+  }
+</script>
