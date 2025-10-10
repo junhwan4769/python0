@@ -23,7 +23,7 @@ def health_graph():
         df = df[:10]
 
     plt.title('지역별 공공의료기관 수', size=20)
-    plt.barh(df['시도군구'], df['count'])
+    plt.barh(df['시도군구'], df['count'], color='black')
 
     img = BytesIO()
     plt.savefig(img, format='png')
