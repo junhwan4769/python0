@@ -1,39 +1,29 @@
+import requests
+# 네이버 검색 API 예제 - 블로그 검색
 import urllib.request
 import json
 
-def getNew(query, start, display):
+#함수생성
+def getNews(query, start, display):
     client_id = "DSISkunI4gxjpwj6Yl6J"
     client_secret = "CxLnF9_VmQ"
     encText = urllib.parse.quote(query)
     url = f"https://openapi.naver.com/v1/search/news.json?query={encText}&start={start}&display={display}" 
+    #+ encText # JSON 결과
+    # url = "https://openapi.naver.com/v1/search/blog.xml?query=" + encText # XML 결과
     request = urllib.request.Request(url)
-    request.add_header("X-Naver-Client-Id", client_id)
-    request.add_header("X-Naver-Client-Secret", client_secret)
+    request.add_header("X-Naver-Client-Id",client_id)
+    request.add_header("X-Naver-Client-Secret",client_secret)
     response = urllib.request.urlopen(request)
     rescode = response.getcode()
-    if rescode == 200:
+    if(rescode==200):
         response_body = response.read()
-        result = json.loads(response_body.decode('utf-8'))
+        result = response_body.decode('utf-8')
+        result = json.loads(result) #jsontype
+        # print(response_body.decode('utf-8'))
         return result['items'], result['total']
     else:
-        print("Error Code:", rescode)
+        print("Error Code:" + rescode)
         return None
-
-if __name__ == '__main__':
-    query = '인공지능'
-    start = 1
-    display = 10
-    results = []
-
-    while start <= 100:
-        news = getNew(query, start, display)
-        if news:
-            results.extend(news)
-        start += display
-
-    print('데이터갯수:', len(results))
-
-    with open(file_path, 'w', encoding='utf-8') as file:
-        json.dump(results, file, ensure_ascii=False, indent=4)
 
 
